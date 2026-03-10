@@ -1,0 +1,12 @@
+name: mitch-incidentconfig-component
+description: Pulumi multi-language component for incident.io configuration management
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+packages:
+  incident:
+    source: terraform-provider
+    version: 1.1.1
+    parameters:
+      - incident-io/incident
