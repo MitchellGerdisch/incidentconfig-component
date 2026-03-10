@@ -1,0 +1,13 @@
+{
+    "name": "mitch-incidentconfig-component",
+    "version": "0.1.0",
+    "main": "index.ts",
+    "devDependencies": {
+        "@types/node": "^18",
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "@pulumi/incident": "file:sdks/incident",
+        "@pulumi/pulumi": "^3.113.0"
+    }
+}
