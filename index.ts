@@ -76,14 +76,14 @@ export interface IncidentConfigArgs {
  * `pulumi package add`.
  */
 export class IncidentConfig extends pulumi.ComponentResource {
-    /** The severity resources created by this component. */
-    public readonly severities: incident.Severity[];
-    /** The incident role resources created by this component. */
-    public readonly roles: incident.IncidentRole[];
-    /** The custom field resources created by this component. */
-    public readonly customFields: incident.CustomField[];
-    /** The status resources created by this component. */
-    public readonly statuses: incident.Status[];
+    /** The IDs of the severity resources created by this component. */
+    public readonly severityIds: pulumi.Output<string[]>;
+    /** The IDs of the incident role resources created by this component. */
+    public readonly roleIds: pulumi.Output<string[]>;
+    /** The IDs of the custom field resources created by this component. */
+    public readonly customFieldIds: pulumi.Output<string[]>;
+    /** The IDs of the status resources created by this component. */
+    public readonly statusIds: pulumi.Output<string[]>;
 
     constructor(
         name: string,
@@ -95,7 +95,7 @@ export class IncidentConfig extends pulumi.ComponentResource {
         const childOpts: pulumi.CustomResourceOptions = { parent: this };
 
         // --- Severities ---------------------------------------------------
-        this.severities = (args.severities ?? []).map((sev, i) => {
+        const severities = (args.severities ?? []).map((sev, i) => {
             return new incident.Severity(`${name}-severity-${i}`, {
                 name: sev.name,
                 description: sev.description,
@@ -104,7 +104,7 @@ export class IncidentConfig extends pulumi.ComponentResource {
         });
 
         // --- Roles --------------------------------------------------------
-        this.roles = (args.roles ?? []).map((role, i) => {
+        const roles = (args.roles ?? []).map((role, i) => {
             return new incident.IncidentRole(`${name}-role-${i}`, {
                 name: role.name,
                 description: role.description,
@@ -114,7 +114,7 @@ export class IncidentConfig extends pulumi.ComponentResource {
         });
 
         // --- Custom Fields ------------------------------------------------
-        this.customFields = (args.customFields ?? []).map((field, i) => {
+        const customFields = (args.customFields ?? []).map((field, i) => {
             return new incident.CustomField(`${name}-field-${i}`, {
                 name: field.name,
                 description: field.description,
@@ -123,7 +123,7 @@ export class IncidentConfig extends pulumi.ComponentResource {
         });
 
         // --- Statuses -----------------------------------------------------
-        this.statuses = (args.statuses ?? []).map((status, i) => {
+        const statuses = (args.statuses ?? []).map((status, i) => {
             return new incident.Status(`${name}-status-${i}`, {
                 name: status.name,
                 description: status.description,
@@ -131,6 +131,17 @@ export class IncidentConfig extends pulumi.ComponentResource {
             }, childOpts);
         });
 
-        this.registerOutputs({});
+        // Expose serializable outputs (IDs) for cross-language consumption.
+        this.severityIds = pulumi.output(severities.map(s => s.id));
+        this.roleIds = pulumi.output(roles.map(r => r.id));
+        this.customFieldIds = pulumi.output(customFields.map(f => f.id));
+        this.statusIds = pulumi.output(statuses.map(s => s.id));
+
+        this.registerOutputs({
+            severityIds: this.severityIds,
+            roleIds: this.roleIds,
+            customFieldIds: this.customFieldIds,
+            statusIds: this.statusIds,
+        });
     }
 }
