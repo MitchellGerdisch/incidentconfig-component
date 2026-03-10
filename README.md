@@ -1,4 +1,4 @@
-# mitch-incidentconfig-component
+# incidentconfig-component
 
 A Pulumi multi-language component that manages incident.io configuration as code.
 
